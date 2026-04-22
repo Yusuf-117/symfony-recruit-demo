@@ -47,6 +47,9 @@ class VacancyController extends AbstractController
     #[Route('/api/vacancies', methods: ['POST'])]
     public function store(Request $req, EntityManagerInterface $em): JsonResponse
     {
+        if ($em->getRepository(Vacancy::class)->count([]) >= 20) {
+            return $this->json(['error' => 'Limit reached'], 403);
+        }
         $data = json_decode($req->getContent(), true);
 
         $v = new Vacancy();

@@ -31,6 +31,9 @@ class ApplicationController extends AbstractController
     #[Route('/api/applications', methods: ['POST'])]
     public function store(Request $req, EntityManagerInterface $em): JsonResponse
     {
+        if ($em->getRepository(Application::class)->count([]) >= 100) {
+            return $this->json(['error' => 'Limit reached'], 403);
+        }
         $data = json_decode($req->getContent(), true);
 
         $candidate = $em->getRepository(Candidate::class)->find($data['candidate_id']);
