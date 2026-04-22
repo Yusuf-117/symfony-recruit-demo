@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500">Total Candidates</div>
+        <div class="text-3xl font-bold mt-2">{{ totalCandidates }}</div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500">Total Vacancies</div>
+        <div class="text-3xl font-bold mt-2">{{ totalVacancies }}</div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500">Interviews</div>
+        <div class="text-3xl font-bold mt-2">{{ interviews }}</div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm text-gray-500">Offers</div>
+        <div class="text-3xl font-bold mt-2">{{ offers }}</div>
+    </div>
+
+</div>
+
+{% endblock %}
