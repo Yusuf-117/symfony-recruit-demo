@@ -18,8 +18,9 @@ jobs:
         with:
           php-version: "8.3"
 
-      - name: Install PHP dependencies
-        run: composer install --no-dev --optimize-autoloader
+      - name: Install PHP dependencies (PROD)
+        run: |
+          composer install --no-dev --optimize-autoloader
 
       - name: Setup SSH
         run: |
@@ -45,7 +46,7 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /var/www/recruitflow &&
-            php bin/console doctrine:migrations:migrate --no-interaction &&
-            php bin/console cache:clear &&
-            php bin/console cache:warmup
+            APP_ENV=prod APP_DEBUG=0 php bin/console doctrine:migrations:migrate --no-interaction &&
+            APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear &&
+            APP_ENV=prod APP_DEBUG=0 php bin/console cache:warmup
           "
