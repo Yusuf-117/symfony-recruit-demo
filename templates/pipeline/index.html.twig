@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+	<h1 class="text-2xl font-bold mb-6">Pipeline</h1>
+	<input id="pipelineSearch" placeholder="Search candidate or role..." class="mb-6 w-full max-w-md border rounded px-3 py-2"/>
+	<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+		{% for stage, apps in grouped %}
+			<div class="bg-gray-100 rounded-lg p-4">
+				<h2 class="font-semibold mb-4 capitalize">{{ stage }}</h2>
+
+				<div class="space-y-3">
+					{% for a in apps %}
+						<div class="bg-white p-3 rounded shadow text-sm pipeline-card" data-search="{{ (a.candidate.name ~ ' ' ~ a.vacancy.title ~ ' ' ~ a.vacancy.companyName)|lower }}">
+							<div class="font-medium">{{ a.candidate.name }}</div>
+							<div class="text-gray-500 text-xs">
+								{{ a.vacancy.title }}
+								@
+								{{ a.vacancy.companyName }}
+							</div>
+
+							{% if stage != 'hired' %}
+								<button onclick="nextStage({{ a.id }})" class="mt-2 text-blue-600 text-xs hover:underline">
+									Next Stage →
+								</button>
+							{% endif %}
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
+
+	</div>
+
+	 <script>
+	async function nextStage(id) {
+	    await fetch(`/api/applications/${id}/stage`, {
+	        method: 'PATCH'
+	    });
+
+	    location.reload();
+	}
+
+	//search
+
+	const input = document.getElementById('pipelineSearch');
+
+	input.addEventListener('input', () => {
+	    const term = input.value.toLowerCase();
+
+	    document.querySelectorAll('.pipeline-card').forEach(card => {
+	        const text = card.dataset.search;
+
+	        if (text.includes(term)) {
+	            card.style.display = '';
+	        } else {
+	            card.style.display = 'none';
+	        }
+	    });
+	});
+	</script>
+
+{% endblock %}

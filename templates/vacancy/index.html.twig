@@ -1,0 +1,98 @@
+{# templates/vacancies/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h1 class="text-2xl font-bold mb-6">Vacancies</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Create form -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold mb-4">Add Vacancy</h2>
+
+        <form id="createVacancy" class="space-y-3">
+            <input name="title" placeholder="Title" class="w-full border rounded px-3 py-2" required>
+            <input name="companyName" placeholder="Company" class="w-full border rounded px-3 py-2" required>
+            <input name="location" placeholder="Location" class="w-full border rounded px-3 py-2">
+
+            <input name="salaryMin" placeholder="Min Salary" type="number" class="w-full border rounded px-3 py-2">
+            <input name="salaryMax" placeholder="Max Salary" type="number" class="w-full border rounded px-3 py-2">
+
+            <label class="flex items-center gap-2">
+                <input type="checkbox" name="isRemote">
+                Remote
+            </label>
+
+            <label class="block text-sm text-gray-600 mb-1">Deadline</label>
+            <input name="deadline" type="date" class="w-full border rounded px-3 py-2">
+
+            <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                Create
+            </button>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b text-gray-500 text-sm">
+                    <th class="py-2">Title</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in vacancies %}
+                    <tr class="border-b">
+                        <td class="py-2">{{ v.title }}</td>
+                        <td>{{ v.companyName }}</td>
+                        <td>{{ v.location ?? '-' }}</td>
+                        <td class="text-right">
+                            <button onclick="deleteVacancy({{ v.id }})"
+                                class="text-red-500 hover:underline text-sm">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+// create
+document.getElementById('createVacancy').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const f = e.target;
+
+    await fetch('/api/vacancies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            title: f.title.value,
+            companyName: f.companyName.value,
+            location: f.location.value,
+            salaryMin: f.salaryMin.value || null,
+            salaryMax: f.salaryMax.value || null,
+            isRemote: f.isRemote.checked,
+            deadline: f.deadline.value
+        })
+    });
+
+    location.reload();
+});
+
+// del
+async function deleteVacancy(id) {
+    await fetch(`/api/vacancies/${id}`, { method: 'DELETE' });
+    location.reload();
+}
+</script>
+
+{% endblock %}
